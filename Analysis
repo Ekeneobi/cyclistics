@@ -45,7 +45,7 @@ library("gridExtra")
 library("knitr")
 
 # Load Cyclistics Data
-df.aal <- read_csv("../input/cyclistics/all.csv")
+df.aal <- read_csv("https://www.kaggle.com/ekenetobi//input/cyclistics/all.csv")
 head(df.aal,100)
 ```
 
@@ -55,7 +55,7 @@ head(df.aal,100)
 #summarise average duration and total duration for all members
 by_member <- df.aal %>% group_by(member_casual)
 a <- by_member %>% summarise(avg_duration_sec = mean(duration_sec), total_duration_sec = sum(duration_sec))
-head(a)
+View(a)
 ```
 Here we have above that the average time spent by each casual member on a single ride is higher than the average time spent by the annual members . 
 We also Have that the Total time spent by the casual members is higher than the total time spent by the annual members.
@@ -88,19 +88,19 @@ getmode(c$day_of_week)
 e <- filter(df.aal,member_casual == "member")
 getmode(e$rideable_type)
 ```
-- **Annual Members prefer riding mostly **
-## Plot
-### Plot Bar chart of Day of the week by number of rides
+- **Members preferred Day of the week and ride type**
+**Plot**
+** Plot Bar chart of Day of the week by number of rides**
 ```{r}
-ggplot(df.aal) + geom_bar(aes(x=day_of_week,fill=member_casual))
+ggplot(df.aal) + geom_bar(aes(x=day_of_week,fill=member_casual))  + labs(title="Preffered Day of the Week") + xlab("Day of the week") + ylab("Frequency")
 ```
 We Observe that casual members use the cylistics services most , and they prefer riding on weekends . The two most fequent days for casual members bike riding days are Saturday and Sunday.
 We also Observe that Annual members prefer riding in weekdays. They the highest most fequented days for annual members are Tuesdays and Wednessday.
 Casual Cyclist have more rides than annual members.
 
-## Plot pie chart of ride bikes type
+** Plot chart of ride bikes type **
 ```{r}
-ggplot(df.aal) + geom_bar(aes(x=rideable_type,fill=member_casual))
+ggplot(df.aal) + geom_bar(aes(x=rideable_type,fill=member_casual)) + labs(title="Preffered Bike Type") + xlab("Ride Type") + ylab("Frequency")
 ```
 We observe that classic bikes is mostly prefered by member types ,and the least prefered are the docked bikes
 
