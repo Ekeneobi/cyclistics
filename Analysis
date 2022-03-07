@@ -45,7 +45,7 @@ library("gridExtra")
 library("knitr")
 
 # Load Cyclistics Data
-df.aal <- read_csv("https://www.kaggle.com/ekenetobi//input/cyclistics/all.csv")
+df.aal <- read_csv("https://www.kaggle.com/ekenetobi/cyclistics/input/cyclistics/all.csv")
 head(df.aal,100)
 ```
 
