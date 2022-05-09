@@ -1,0 +1,149 @@
+---
+title: 'Cyclistics: the ride share App'
+output:
+  pdf_document:
+    toc: yes
+  html_document:
+    number_sections: yes
+    toc: yes
+    fig_width: 8
+    fig_height: 5
+    theme: cosmo
+    highlight: tango
+    code_folding: hide
+---
+
+# Statement|Ask
+
+The Cyclistics Bike is a ride share company that deals with two categories of customers. The Casual bikers and the annual members.Casual members are members whom pay per ride or per day riders , while members are riders whom have subscribed for one or more than one year subscription.
+We have been tasked by the marketing team to study both categories and how the use our services , as the marketers believe focusing our marketing ads to convert casual riders to annual members is beneficial to the future growth of the company.
+This can only be true if there is compelling evidence that the casual riders are more active than the long term members.
+
+# Data|Prepare
+
+We have data gotten from the database of the Cyclists.
+We have the last twelve months  of from November 2021 to December 2020 rides data of both casual and annual members to look at. The datasheets for each month are separate and will need to be merged after filtering the colomns and rows we and and cleaning the data.
+We have the rideable_type colomn which contains the type of bikes the rider uses.
+We have start_at and end_at colomns which give the start tiem and end time of each riders ride, subtract the start_at from the end_at will give us the duration of each ride.
+We have the the member_casual colomn which tells us if the rider is a casual or a member rider.
+We have the day_of_week colomn which relates to the day of the week the ride was booked.
+We have the duration of the ride in days measurement when converted to seconds we have the duration_sec colomn
+Data was cleaned, filtered and merged using Excel and R 
+
+# Process|Analyse
+
+The Data was processed and analysed using excel and R
+
+Find the excel results here -->  https://1drv.ms/x/s!AiifC2Me2Kdcj0UYUW2UgJsOy5CM?e=VJrRfG
+
+```{r}
+# Load packages
+library("plotly")
+library("tidyverse")
+library("data.table")
+library("dplyr")
+library("gridExtra")
+library("knitr")
+library("scales")
+
+# Load Cyclistics Data
+df.aal <- read_csv("C:/Users/Ekene Obi/Desktop/COURSERA/Case Study 1/previous12months_csv/all.csv")
+head(df.aal,100)
+```
+
+# Descriptive Analsis
+## Summarise Average Duration and Total Duration
+```{r}
+#summarise average duration and total duration for all members
+by_member <- df.aal %>% group_by(member_casual)
+a <- by_member %>% summarise(avg_duration_sec = mean(duration_sec), total_duration_sec = sum(duration_sec))
+view(a)
+```
+
+Here we have above that the average time spent by each casual member on a single ride is higher than the average time spent by the annual members . 
+We also Have that the Total time spent by the casual members is higher than the total time spent by the annual members.
+This indicates that casual members spend more time the most time using Cyclistics services than annual members.
+
+```{r}
+# Create the function for fequency of occurence | mode.
+getmode <- function(v) {
+ uniqv <- unique(v)
+ uniqv[which.max(tabulate(match(v, uniqv)))]
+}
+```
+
+```{r}
+b <- filter(df.aal,member_casual == "casual")
+getmode(b$day_of_week)
+```
+
+- **Casual Members Fequent the bike station most on **
+
+```{r}
+d <- filter(df.aal,member_casual == "casual")
+getmode(d$rideable_type)
+```
+
+- **Casual Members prefer riding mostly **
+
+```{r}
+c <- filter(df.aal,member_casual == "member")
+getmode(c$day_of_week)
+```
+
+- **Annual Members Fequent the bike station most on **
+
+```{r}
+e <- filter(df.aal,member_casual == "member")
+getmode(e$rideable_type)
+```
+
+# Members preferred Day of the week and ride type**
+
+## Plot Bar chart of Preffered Day of the week by member number of rides
+
+```{r}
+ggplot(df.aal) + geom_bar(aes(x=day_of_week,fill=member_casual))  + labs(title="Preffered Day of the Week") + xlab("Day of the week") + ylab("Frequency")
+```
+
+We Observe that casual members use the cylistics services most , and they prefer riding on weekends . The two most fequent days for casual members bike riding days are Saturday and Sunday.
+We also Observe that Annual members prefer riding in weekdays. They the highest most fequented days for annual members are Tuesdays and Wednessday.
+Casual Cyclist have more rides than annual members.
+
+## Plot Bar chart of Ride Type by member number of rides
+```{r}
+ggplot(df.aal) + geom_bar(aes(x=rideable_type,fill=member_casual)) + labs(title="Preffered Bike Type") + xlab("Ride Type") + ylab("Frequency")
+```
+
+We observe that classic bikes is mostly prefered by member types ,and the least prefered are the docked bikes
+
+## Plot Pie chart Number Rides booked riding by Member Class
+
+```{r}
+p <- df.aal %>% count(df.aal$member_casual) %>% mutate( n=as.numeric(n))
+view(p)
+perc = p$n/sum(p$n)
+Labels = percent(perc)
+pie(p$n,labels = Labels ,main = "Total Number Rides booked riding by Member Class", col=c("lightblue","orange"))
+legend("topright", c("Casual","Member"), cex = 0.8,fill = c("lightblue","orange"))
+```
+
+We Notice that the Number of Rides Booked by Each member class is almost equal.
+
+## Plot Pie Time Spent Riding by Member Class
+
+```{r}
+q <- df.aal %>% count(df.aal$member_casual , wt = duration_sec) %>% mutate( n=as.numeric(n))
+view(q)
+perc = q$n/sum(q$n)
+Labels = percent(perc)
+pie(q$n,labels = Labels,main = "Total Time Spent Riding by Member Class", col = c("lightblue","orange"))
+legend("topright", c("Casual","Member"), cex = 0.8,fill = c("lightblue","orange"))
+```
+
+Her we notice that the Casual members Spend more time riding their bikes than the Annual Members
+
+# Summary of Findings
+
+We noticed that casual members use Cyclistics services more than annual members almost twice as much.
+Cyclistics will make more money by converting casual members to annual members by targeting them with ads and repackaging the annual memberships for attracting casual members.
